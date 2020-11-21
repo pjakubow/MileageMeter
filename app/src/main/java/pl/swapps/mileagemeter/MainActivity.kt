@@ -1,38 +1,37 @@
 package pl.swapps.mileagemeter
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.fab
+import kotlinx.android.synthetic.main.activity_main.toolbar
+import kotlinx.android.synthetic.main.content_main.mainText
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import java.time.LocalDate
-import java.time.Month
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val mileageCalculator =
+        MileageCalculator(20_000, 3, ZonedDateTime.of(2019, 8, 22, 0, 0, 0, 0, ZoneId.of("Europe/Warsaw")))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        mainText.text = resolveMileage(20_000, Date(119, 7, 22))
+        val mileage = mileageCalculator.calculateCurrentTarget(
+            ZonedDateTime.now(ZoneId.systemDefault())
+        )
+        mainText.text = "${mileage.targetMileage} as for ${mileage.targetDate}"
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show()
+                .setAction("Action", null)
+                .show()
         }
-    }
-
-    private fun resolveMileage(declaredYearlyMileage: Int, startDate: Date): CharSequence? {
-        val now = Date()
-        val dailyMileage = declaredYearlyMileage / 365
-        val daysSinceStart = (now.time - startDate.time) / (24 * 3600 * 1000)
-        return  String.format("daily mileage: %d km,\ndays since start: %d,\nyou should have made: %d km", dailyMileage, daysSinceStart, daysSinceStart * dailyMileage)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
