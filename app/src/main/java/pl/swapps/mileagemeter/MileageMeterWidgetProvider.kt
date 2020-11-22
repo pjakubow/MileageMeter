@@ -4,7 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
+import java.text.NumberFormat
 import java.time.ZonedDateTime
+import java.util.*
 
 class MileageMeterWidgetProvider : AppWidgetProvider() {
 
@@ -21,7 +23,8 @@ class MileageMeterWidgetProvider : AppWidgetProvider() {
             R.layout.widget_layout
         ).apply {
             val mileage = calculator.calculateCurrentTarget(ZonedDateTime.now())
-            setTextViewText(R.id.widgetMainText, String.format("%d", mileage.targetMileage))
+            val nf = NumberFormat.getInstance(Locale.getDefault())
+            setTextViewText(R.id.widgetMainText, nf.format(mileage.targetMileage))
         }
         appWidgetManager?.updateAppWidget(appWidgetId, views)
     }
